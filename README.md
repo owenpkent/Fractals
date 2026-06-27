@@ -30,6 +30,9 @@ No build step, no install. Either:
 | `+` / `-`   | more / fewer iterations (detail vs. speed)            |
 | `s`         | save a PNG screenshot                                 |
 
+No mouse wheel? Use the on-screen **+ / −** buttons in the bottom-right corner
+to zoom in and out.
+
 Tip: explore any set, hover over an interesting edge, then press `j` to see
 the Julia set that corresponds to that exact point.
 

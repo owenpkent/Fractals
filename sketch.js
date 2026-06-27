@@ -36,6 +36,7 @@ let juliaC = { re: -0.8, im: 0.156 };
 let fractal; // off-screen buffer holding the rendered image
 let needsRender = true;
 const palette = [];
+let zoomButtons = [];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -43,6 +44,7 @@ function setup() {
   fractal = createGraphics(width, height);
   fractal.pixelDensity(1);
   buildPalette();
+  makeButtons();
   needsRender = true;
 }
 
@@ -220,14 +222,18 @@ function mouseDragged() {
   needsRender = true;
 }
 
-function mouseWheel(event) {
-  const before = screenToComplex(mouseX, mouseY);
-  view.scale *= event.delta > 0 ? 1.12 : 0.89;
-  const after = screenToComplex(mouseX, mouseY);
-  // Keep the point under the cursor fixed while zooming.
+// Zoom by `factor` (< 1 zooms in) while keeping the point at (sx, sy) fixed.
+function zoomAt(sx, sy, factor) {
+  const before = screenToComplex(sx, sy);
+  view.scale *= factor;
+  const after = screenToComplex(sx, sy);
   view.centerX += before.re - after.re;
   view.centerY += before.im - after.im;
   needsRender = true;
+}
+
+function mouseWheel(event) {
+  zoomAt(mouseX, mouseY, event.delta > 0 ? 1.12 : 0.89);
   return false; // stop the page from scrolling
 }
 
@@ -281,5 +287,47 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   fractal = createGraphics(width, height);
   fractal.pixelDensity(1);
+  layoutButtons();
   needsRender = true;
+}
+
+// ---- On-screen zoom buttons ------------------------------------------------
+
+function makeButtons() {
+  const zin = createButton("+");
+  styleZoomButton(zin);
+  zin.attribute("title", "Zoom in");
+  zin.attribute("aria-label", "Zoom in");
+  zin.mousePressed(() => zoomAt(width / 2, height / 2, 0.8));
+
+  const zout = createButton("−"); // minus sign
+  styleZoomButton(zout);
+  zout.attribute("title", "Zoom out");
+  zout.attribute("aria-label", "Zoom out");
+  zout.mousePressed(() => zoomAt(width / 2, height / 2, 1.25));
+
+  zoomButtons = [zin, zout];
+  layoutButtons();
+}
+
+function styleZoomButton(b) {
+  b.size(48, 48);
+  b.style("font-size", "26px");
+  b.style("font-family", "monospace");
+  b.style("color", "#fff");
+  b.style("background", "rgba(0, 0, 0, 0.55)");
+  b.style("border", "1px solid rgba(255, 255, 255, 0.4)");
+  b.style("border-radius", "8px");
+  b.style("cursor", "pointer");
+  b.style("user-select", "none");
+}
+
+function layoutButtons() {
+  if (zoomButtons.length < 2) return;
+  const size = 48;
+  const gap = 10;
+  const margin = 20;
+  const x = width - size - margin;
+  zoomButtons[0].position(x, height - size * 2 - gap - margin); // +
+  zoomButtons[1].position(x, height - size - margin); // −
 }

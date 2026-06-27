@@ -1,4 +1,4 @@
-// Fractal Explorer — p5.js
+// Fractal Explorer (p5.js)
 // An interactive explorer for several escape-time fractals.
 //
 // Controls:
@@ -13,7 +13,7 @@
 //
 // This is a starting point. Tweak the palette, the math, and the controls
 // to make the fractals your own. The iteration step in renderFractal() is
-// where each fractal is defined — add your own there.
+// where each fractal is defined. Add your own there.
 
 // Each fractal type plus a pleasing default view onto the complex plane.
 // `scale` is the width of that view in complex units.

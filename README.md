@@ -3,7 +3,7 @@
 Interactive fractals built with [p5.js](https://p5js.org/). A playground for
 exploring escape-time fractals in the browser, with smooth coloring and live
 zoom. Includes the Mandelbrot set, the Burning Ship, the Tricorn, and the
-Multibrot — plus a Julia set for any of them.
+Multibrot, plus a Julia set for any of them.
 
 ## Run it
 
@@ -42,15 +42,15 @@ the Julia set that corresponds to that exact point.
 Press `p` to tour these (and `P` to step back). The first group are deep
 zooms into the Mandelbrot set; the rest are classic named Julia sets.
 
-- **Seahorse Valley**, **Elephant Valley**, **Triple Spiral** — the famous
+- **Seahorse Valley**, **Elephant Valley**, **Triple Spiral**: the famous
   decorated valleys around the main cardioid.
-- **Feigenbaum Point** (c ≈ -1.401155) — the period-doubling accumulation
+- **Feigenbaum Point** (c ≈ -1.401155): the period-doubling accumulation
   point. This is an infinitely renormalizable parameter, exactly the kind of
   place where the "is the Mandelbrot set locally connected?" question lives.
-- **Mini Mandelbrot** — a tiny self-similar copy on the antenna.
-- **Misiurewicz Spiral** (c ≈ -0.1011 + 0.9563i) — near a Misiurewicz point,
+- **Mini Mandelbrot (period 3)**: a tiny self-similar copy on the antenna.
+- **Misiurewicz Spiral** (c ≈ -0.1011 + 0.9563i): near a Misiurewicz point,
   where the Mandelbrot set looks like the Julia set seeded by that same point.
-- **Douady Rabbit**, **Basilica**, **Dendrite**, **Siegel Disk** — classic
+- **Douady Rabbit**, **Basilica**, **Dendrite**, **Siegel Disk**: classic
   Julia sets, each defined by a single constant c.
 
 ## Make it your own
@@ -59,8 +59,8 @@ zooms into the Mandelbrot set; the rest are classic named Julia sets.
 
 - **Recolor it.** Edit `buildPalette()` to change the gradient.
 - **More fractals.** The escape-time loop in `renderFractal()` is the heart of
-  it. Mandelbrot, Burning Ship, Tricorn, and Multibrot already live there —
-  add your own iteration formula next to them (a Phoenix or a Newton fractal
+  it. Mandelbrot, Burning Ship, Tricorn, and Multibrot already live there.
+  Add your own iteration formula next to them (a Phoenix or a Newton fractal
   are good next steps).
 - **Animate.** Slowly drift `juliaC` in `draw()` for a morphing Julia set.
 - **Go faster.** Render at lower resolution while dragging, then sharpen when
@@ -68,4 +68,4 @@ zooms into the Mandelbrot set; the rest are classic named Julia sets.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).

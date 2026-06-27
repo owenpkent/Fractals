@@ -21,6 +21,7 @@ No build step, no install. Either:
 
 | Action      | What it does                                          |
 | ----------- | ----------------------------------------------------- |
+| `p` / `P`   | jump to next / previous featured location             |
 | `1` `2` `3` `4` | Mandelbrot / Burning Ship / Tricorn / Multibrot   |
 | `[` / `]`   | Multibrot power down / up (switches to Multibrot)     |
 | drag        | pan                                                   |
@@ -35,6 +36,22 @@ to zoom in and out.
 
 Tip: explore any set, hover over an interesting edge, then press `j` to see
 the Julia set that corresponds to that exact point.
+
+## Featured locations
+
+Press `p` to tour these (and `P` to step back). The first group are deep
+zooms into the Mandelbrot set; the rest are classic named Julia sets.
+
+- **Seahorse Valley**, **Elephant Valley**, **Triple Spiral** — the famous
+  decorated valleys around the main cardioid.
+- **Feigenbaum Point** (c ≈ -1.401155) — the period-doubling accumulation
+  point. This is an infinitely renormalizable parameter, exactly the kind of
+  place where the "is the Mandelbrot set locally connected?" question lives.
+- **Mini Mandelbrot** — a tiny self-similar copy on the antenna.
+- **Misiurewicz Spiral** (c ≈ -0.1011 + 0.9563i) — near a Misiurewicz point,
+  where the Mandelbrot set looks like the Julia set seeded by that same point.
+- **Douady Rabbit**, **Basilica**, **Dendrite**, **Siegel Disk** — classic
+  Julia sets, each defined by a single constant c.
 
 ## Make it your own
 

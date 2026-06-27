@@ -25,6 +25,22 @@ const FRACTALS = [
 ];
 const JULIA_HOME = { centerX: 0, centerY: 0, scale: 3.5 };
 
+// Famous locations to jump to with the `p` key. Mandelbrot zooms reveal named
+// valleys and the deep structure tied to open problems (MLC, self-similarity);
+// the Julia presets are classic named sets seeded by a constant c.
+const PRESETS = [
+  { name: "Seahorse Valley", type: 0, view: { centerX: -0.748, centerY: 0.107, scale: 0.06 }, iter: 400 },
+  { name: "Elephant Valley", type: 0, view: { centerX: 0.295, centerY: 0.012, scale: 0.05 }, iter: 400 },
+  { name: "Triple Spiral", type: 0, view: { centerX: -0.0885, centerY: 0.6537, scale: 0.018 }, iter: 600 },
+  { name: "Feigenbaum Point", type: 0, view: { centerX: -1.401155, centerY: 0, scale: 0.08 }, iter: 700 },
+  { name: "Mini Mandelbrot (period 3)", type: 0, view: { centerX: -1.7549, centerY: 0, scale: 0.18 }, iter: 700 },
+  { name: "Misiurewicz Spiral", type: 0, view: { centerX: -0.10109636, centerY: 0.95628651, scale: 0.025 }, iter: 600 },
+  { name: "Douady Rabbit (Julia)", type: 0, julia: { re: -0.122565, im: 0.744862 }, view: { centerX: 0, centerY: 0, scale: 3.0 }, iter: 300 },
+  { name: "Basilica (Julia)", type: 0, julia: { re: -1, im: 0 }, view: { centerX: 0, centerY: 0, scale: 3.0 }, iter: 300 },
+  { name: "Dendrite (Julia)", type: 0, julia: { re: 0, im: 1 }, view: { centerX: 0, centerY: 0, scale: 3.0 }, iter: 400 },
+  { name: "Siegel Disk (Julia)", type: 0, julia: { re: -0.390541, im: -0.586788 }, view: { centerX: 0, centerY: 0, scale: 3.0 }, iter: 800 },
+];
+
 let fractalType = 0; // index into FRACTALS
 let multibrotPower = 3; // exponent used by the Multibrot
 let view = { ...FRACTALS[0].home };
@@ -37,6 +53,8 @@ let fractal; // off-screen buffer holding the rendered image
 let needsRender = true;
 const palette = [];
 let zoomButtons = [];
+let presetIndex = -1; // index into PRESETS, or -1 when off the tour
+let presetName = ""; // label shown in the HUD while a preset is active
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -176,14 +194,15 @@ function drawHud() {
   const ref = juliaMode ? JULIA_HOME : f.home;
   const zoom = (ref.scale / view.scale).toFixed(2);
 
-  let title = juliaMode ? `Julia · ${f.name}` : f.name;
-  if (fractalType === 3) title += `  power ${multibrotPower}`;
+  let title = presetName ? `★ ${presetName}` : juliaMode ? `Julia · ${f.name}` : f.name;
+  if (!presetName && fractalType === 3) title += `  power ${multibrotPower}`;
   if (juliaMode) title += `   c = ${fmt(juliaC.re)} + ${fmt(juliaC.im)}i`;
 
   const lines = [
     title,
     `zoom ${zoom}x   iter ${maxIter}`,
-    "1-4 type · [ ] power · j julia · drag pan · scroll zoom · r reset · +/- detail · s save",
+    "p presets · 1-4 type · [ ] power · j julia · r reset",
+    "drag pan · scroll/buttons zoom · +/- detail · s save",
   ];
 
   noStroke();
@@ -206,6 +225,29 @@ function fmt(n) {
 
 function homeView() {
   return juliaMode ? { ...JULIA_HOME } : { ...FRACTALS[fractalType].home };
+}
+
+// Jump to a featured location. Wraps around in both directions.
+function applyPreset(i) {
+  presetIndex = ((i % PRESETS.length) + PRESETS.length) % PRESETS.length;
+  const p = PRESETS[presetIndex];
+  fractalType = p.type;
+  if (p.julia) {
+    juliaMode = true;
+    juliaC = { re: p.julia.re, im: p.julia.im };
+  } else {
+    juliaMode = false;
+  }
+  view = { ...p.view };
+  if (p.iter) maxIter = p.iter;
+  presetName = p.name;
+  needsRender = true;
+}
+
+// Manual navigation drops the preset label (you have left the tour).
+function leaveTour() {
+  presetName = "";
+  needsRender = true;
 }
 
 function screenToComplex(sx, sy) {
@@ -238,11 +280,17 @@ function mouseWheel(event) {
 }
 
 function keyPressed() {
-  if (key >= "1" && key <= "4") {
+  if (key === "p") {
+    applyPreset(presetIndex + 1);
+    return;
+  } else if (key === "P") {
+    applyPreset(presetIndex - 1);
+    return;
+  } else if (key >= "1" && key <= "4") {
     fractalType = Number(key) - 1;
     juliaMode = false;
     view = homeView();
-    needsRender = true;
+    leaveTour();
   } else if (key === "]") {
     if (fractalType !== 3) {
       fractalType = 3;
@@ -250,7 +298,7 @@ function keyPressed() {
       view = homeView();
     }
     multibrotPower = Math.min(multibrotPower + 1, 8);
-    needsRender = true;
+    leaveTour();
   } else if (key === "[") {
     if (fractalType !== 3) {
       fractalType = 3;
@@ -258,7 +306,7 @@ function keyPressed() {
       view = homeView();
     }
     multibrotPower = Math.max(multibrotPower - 1, 2);
-    needsRender = true;
+    leaveTour();
   } else if (key === "j" || key === "J") {
     if (!juliaMode) {
       // Seed the Julia set from the point currently under the cursor.
@@ -268,10 +316,10 @@ function keyPressed() {
       juliaMode = false;
     }
     view = homeView();
-    needsRender = true;
+    leaveTour();
   } else if (key === "r" || key === "R") {
     view = homeView();
-    needsRender = true;
+    leaveTour();
   } else if (key === "+" || key === "=") {
     maxIter = Math.min(maxIter + 50, 2000);
     needsRender = true;
